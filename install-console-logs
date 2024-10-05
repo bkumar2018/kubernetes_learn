@@ -99,4 +99,16 @@ kube-system   kube-proxy-bl6xh                   1/1     Running   0            
 kube-system   kube-scheduler-minikube            1/1     Running   0             76s
 kube-system   storage-provisioner                1/1     Running   1 (41s ago)   75s
 chanchal@Chanchals-MacBook-Pro kubernetes % 
+chanchal@Chanchals-MacBook-Pro kubernetes % minikube dashboard
+🔌  Enabling dashboard ...
+    ▪ Using image docker.io/kubernetesui/dashboard:v2.7.0
+    ▪ Using image docker.io/kubernetesui/metrics-scraper:v1.0.8
+💡  Some dashboard features require the metrics-server addon. To enable all features please run:
+
+	minikube addons enable metrics-server
+
+🤔  Verifying dashboard health ...
+🚀  Launching proxy ...
+🤔  Verifying proxy health ...
+🎉  Opening http://127.0.0.1:54716/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/ in your default browser...
 
