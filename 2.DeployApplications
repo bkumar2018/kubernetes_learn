@@ -1,0 +1,134 @@
+
+Create a sample deployment and expose it on port 8080:
+
+chanchal@Chanchals-MacBook-Pro kubernetes % kubectl create deployment hello-minikube --image=kicbase/echo-server:1.0
+deployment.apps/hello-minikube created
+chanchal@Chanchals-MacBook-Pro kubernetes % kubectl expose deployment hello-minikube --type=NodePort --port=8080
+service/hello-minikube exposed
+chanchal@Chanchals-MacBook-Pro kubernetes %
+
+It may take a moment, but your deployment will soon show up when you run:
+chanchal@Chanchals-MacBook-Pro kubernetes % kubectl get services hello-minikube
+NAME             TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)          AGE
+hello-minikube   NodePort   10.99.5.182   <none>        8080:32471/TCP   3m1s
+chanchal@Chanchals-MacBook-Pro kubernetes %
+
+The easiest way to access this service is to let minikube launch a web browser for you:
+chanchal@Chanchals-MacBook-Pro kubernetes % minikube service hello-minikube
+|-----------|----------------|-------------|---------------------------|
+| NAMESPACE |      NAME      | TARGET PORT |            URL            |
+|-----------|----------------|-------------|---------------------------|
+| default   | hello-minikube |        8080 | http://192.168.49.2:32471 |
+|-----------|----------------|-------------|---------------------------|
+🏃  Starting tunnel for service hello-minikube.
+|-----------|----------------|-------------|------------------------|
+| NAMESPACE |      NAME      | TARGET PORT |          URL           |
+|-----------|----------------|-------------|------------------------|
+| default   | hello-minikube |             | http://127.0.0.1:55049 |
+|-----------|----------------|-------------|------------------------|
+🎉  Opening service default/hello-minikube in default browser...
+❗  Because you are using a Docker driver on darwin, the terminal needs to be open to run it.
+
+
+Alternatively, use kubectl to forward the port:
+
+kubectl port-forward service/hello-minikube 7080:8080
+Tada! Your application is now available at http://localhost:7080/.
+
+You should be able to see the request metadata in the application output. Try changing the path of the request and observe the changes. Similarly, you can do a POST request and observe the body show up in the output.
+
+chanchal@Chanchals-MacBook-Pro kubernetes % kubectl port-forward service/hello-minikube 7080:8080
+Forwarding from 127.0.0.1:7080 -> 8080
+Forwarding from [::1]:7080 -> 8080
+
+Handling connection for 7080
+Handling connection for 7080
+
+chanchal@Chanchals-MacBook-Pro kubernetes % minikube stop 
+✋  Stopping node "minikube"  ...
+🛑  Powering off "minikube" via SSH ...
+🛑  1 node stopped.
+chanchal@Chanchals-MacBook-Pro kubernetes % minikube addons list
+|-----------------------------|----------|--------------|--------------------------------|
+|         ADDON NAME          | PROFILE  |    STATUS    |           MAINTAINER           |
+|-----------------------------|----------|--------------|--------------------------------|
+| ambassador                  | minikube | disabled     | 3rd party (Ambassador)         |
+| auto-pause                  | minikube | disabled     | minikube                       |
+| cloud-spanner               | minikube | disabled     | Google                         |
+| csi-hostpath-driver         | minikube | disabled     | Kubernetes                     |
+| dashboard                   | minikube | enabled ✅   | Kubernetes                     |
+| default-storageclass        | minikube | enabled ✅   | Kubernetes                     |
+| efk                         | minikube | disabled     | 3rd party (Elastic)            |
+| freshpod                    | minikube | disabled     | Google                         |
+| gcp-auth                    | minikube | disabled     | Google                         |
+| gvisor                      | minikube | disabled     | minikube                       |
+| headlamp                    | minikube | disabled     | 3rd party (kinvolk.io)         |
+| helm-tiller                 | minikube | disabled     | 3rd party (Helm)               |
+| inaccel                     | minikube | disabled     | 3rd party (InAccel             |
+|                             |          |              | [info@inaccel.com])            |
+| ingress                     | minikube | disabled     | Kubernetes                     |
+| ingress-dns                 | minikube | disabled     | minikube                       |
+| inspektor-gadget            | minikube | disabled     | 3rd party                      |
+|                             |          |              | (inspektor-gadget.io)          |
+| istio                       | minikube | disabled     | 3rd party (Istio)              |
+| istio-provisioner           | minikube | disabled     | 3rd party (Istio)              |
+| kong                        | minikube | disabled     | 3rd party (Kong HQ)            |
+| kubeflow                    | minikube | disabled     | 3rd party                      |
+| kubevirt                    | minikube | disabled     | 3rd party (KubeVirt)           |
+| logviewer                   | minikube | disabled     | 3rd party (unknown)            |
+| metallb                     | minikube | disabled     | 3rd party (MetalLB)            |
+| metrics-server              | minikube | disabled     | Kubernetes                     |
+| nvidia-device-plugin        | minikube | disabled     | 3rd party (NVIDIA)             |
+| nvidia-driver-installer     | minikube | disabled     | 3rd party (NVIDIA)             |
+| nvidia-gpu-device-plugin    | minikube | disabled     | 3rd party (NVIDIA)             |
+| olm                         | minikube | disabled     | 3rd party (Operator Framework) |
+| pod-security-policy         | minikube | disabled     | 3rd party (unknown)            |
+| portainer                   | minikube | disabled     | 3rd party (Portainer.io)       |
+| registry                    | minikube | disabled     | minikube                       |
+| registry-aliases            | minikube | disabled     | 3rd party (unknown)            |
+| registry-creds              | minikube | disabled     | 3rd party (UPMC Enterprises)   |
+| storage-provisioner         | minikube | enabled ✅   | minikube                       |
+| storage-provisioner-gluster | minikube | disabled     | 3rd party (Gluster)            |
+| storage-provisioner-rancher | minikube | disabled     | 3rd party (Rancher)            |
+| volcano                     | minikube | disabled     | third-party (volcano)          |
+| volumesnapshots             | minikube | disabled     | Kubernetes                     |
+| yakd                        | minikube | disabled     | 3rd party (marcnuri.com)       |
+|-----------------------------|----------|--------------|--------------------------------|
+chanchal@Chanchals-MacBook-Pro kubernetes % 
+
+chanchal@Chanchals-MacBook-Pro kubernetes % minikube status
+minikube
+type: Control Plane
+host: Stopped
+kubelet: Stopped
+apiserver: Stopped
+kubeconfig: Stopped
+
+started again
+chanchal@Chanchals-MacBook-Pro kubernetes % minikube start 
+😄  minikube v1.34.0 on Darwin 11.7.4 (arm64)
+✨  Using the docker driver based on existing profile
+👍  Starting "minikube" primary control-plane node in "minikube" cluster
+🚜  Pulling base image v0.0.45 ...
+🔄  Restarting existing docker container for "minikube" ...
+🐳  Preparing Kubernetes v1.31.0 on Docker 27.2.0 ...
+🔎  Verifying Kubernetes components...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+    ▪ Using image docker.io/kubernetesui/dashboard:v2.7.0
+    ▪ Using image docker.io/kubernetesui/metrics-scraper:v1.0.8
+💡  Some dashboard features require the metrics-server addon. To enable all features please run:
+	minikube addons enable metrics-server
+🌟  Enabled addons: storage-provisioner, dashboard, default-storageclass
+❗  /usr/local/bin/kubectl is version 1.21.5, which may have incompatibilities with Kubernetes 1.31.0.
+    ▪ Want kubectl v1.31.0? Try 'minikube kubectl -- get pods -A'
+🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+
+chanchal@Chanchals-MacBook-Pro kubernetes % minikube status
+minikube
+type: Control Plane
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
+chanchal@Chanchals-MacBook-Pro kubernetes % 
+
