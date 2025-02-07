@@ -1,0 +1,140 @@
+1. softwares
+   Os kernel
+   Hardware
+
+2.
+
+Software's
+Docker
+OS-Ubuntu
+Hardware
+
+Cluster:
+Groupd of nodes,
+Master manages cluster - another node with k8s installed on it
+
+API server - front end
+etcd - keyvlaue store - all store information of multiple nodes etc
+scheduler -
+controller -
+container runtime - docker
+kubelet - agent on nodes
+
+Master -
+Kube-API server
+etcd
+controller
+scheduler
+
+WorkerNodes
+kubelet
+kube-proxy
+docker container run time
+
+kubectl run <nameofservice>
+kubectl cluster-info
+kubectl get nodes
+
+---
+
+Docker vs ContainerD
+
+ctr nerdctl cricctl
+
+CRI - container runtime interface
+
+OCI - Open container initiative (OCI)
+imagespec
+runtimespec
+
+Docker
+|
+dockershim
+|
+k8s
+
+containerD - tool as Docker
+
+ctr - cmd comes with containerD
+ctr images pull <image-address>
+ctr run ...
+
+nerdctl - provide docker like cli for contaierD
+nerdctl supports docker compose
+nerdctl supports new features in containerD
+
+- encrypted container images
+- lazy pull
+- p2p image distribution
+- image spining and verifying
+- namespaces in k8s
+
+nerdctl run --name redis redis:alpine
+
+replace docker with nerdctl
+
+crictl - provide a cLi for cri compatible container runtimes
+installed separately
+used to inspect and debug container runtimes
+not to create container ideally
+works accross different runtimes
+
+usages:
+crictl pull images
+crictl images
+crictl ps -a
+crictl exec -i -t contineid ls
+cricctl logs
+crictl pods
+
+    crictl
+        - dockershim
+        contianerd
+        crio
+        cri-dockered
+
+        containerd                                          k8s Cri
+
+ctr nerdctl crictl
+
+The ctr CLI tool is used to interact directly with the containerd environment. It allows users to perform actions like managing containers, images, namespaces, and tasks within the containerd runtime, mainly used for contianer debugging tool
+
+Question:
+
+- Why was Dockershim removed from Kubernetes?
+  - with version 1.24 because Kubernetes wanted to streamline container runtime support and encourage the use of container runtimes that conform to the Container Runtime Interface (CRI).
+  - k8s wanted to support multiple container runtimes and not just docker
+  - To make k8s compatible with other container runtimes
+
+## K8s Pods:
+
+our ultimate aim / motive is run deploy apps as container on machine in cluster env on worker nodes
+
+- K8s does not deploy containers directly on the worker nodes
+- Container are encapsulated into a k8s object known as pods. with some ip address [localhost for internal container]
+- Pod is single instance of an application
+- Pod is smallest object that you can create in k8s
+- 1 Pod with 1 container
+- 1 Pod can have multi containers but not of same kind they are called helper container
+
+docker run python-app
+docker run python-app
+docker run python-app
+docker run python-app
+docker run helper -link app1
+docker run helper -link app2
+docker run helper -link app3
+
+As load increases or users load increases:
+we do not add additional container in existing pod rather
+we create a new pod and add container in that new pod or
+cerate a new worker node and then create a pod with conatiner in it.
+
+## kubectl:
+
+kubectl run nginx --image nginx
+kubectl get pods
+kubectl describe pod nginx
+kubectl get pods -o wide --> aditional inform with IP address
+
+kubectl create deployment nginx --image=nginx

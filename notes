@@ -1,0 +1,128 @@
+Kubernetes:
+Its all inclusive PaaS (Platform as a Service) system.
+K8s is its short form
+Kubernetes operates at container level rather than at hardware level'
+Its offers -
+    - Deployment, scaling, load balancing, logging, monitoring and alerts solution
+K8s is not monolithic 
+
+If application run on container, it should run on k8s
+Its does not build or deploy source code
+Its does not provide middleware, data-processing frameworks,db,cahes nor cluster storage systems, such componenets run on k8s
+
+
+Traditional Deployment:
+
+Apps
+|
+Operating system
+|
+Hardware
+
+
+Virtualized Deployment:
+- Its allow you run multiple VMs on single physical server CPU
+- Application to be isolated and provides level of security, as the information of one application cannot be freely accessed by another application.
+- Each VM is a full machine running all the components, including its own operating system, on top of the virtualized hardware.
+
+
+
+VM's
+|
+Hypervisor
+|
+Operating system
+|
+Hardware
+
+
+VMs -> 
+            App1 App2
+            |
+            Bin/Lib
+            |
+            OS
+            |
+            Virtaul Machine
+        |
+        Hypervisior
+        |
+        OS
+        |
+        Hardware
+
+
+
+Container Deployment:
+- Simiilar like VMs, but they have relaxed isolation properties to share OS, among applications
+- Containers are lightweight
+- Similar to a VM, a container has its own filesystem, share of CPU, memory, process space, and more. As they are decoupled from the underlying infrastructure, they are portable across clouds and OS distributions.
+- Pro's 
+    - Increase ease and efficiency of container image creations compared to VM image use.
+    - Observability: not only surfaces OS-level information and metrics, but also application health and other signals.
+- Linux cgroups and namespaces
+
+Container's
+|
+Container Runtime
+|
+Operating system
+|
+Hardware
+
+
+
+Container's ->
+            App1 App2 
+            |
+            Bin/Lib
+            |
+            Container1 Container2
+        |
+        Container Runtime
+        |
+        OS
+        |
+        Hardware
+
+
+
+Kubernetes Components:
+- A Kubernetes cluster consists of a control plane and one or more worker nodes. 
+
+Control Plane Components: Manage the overall state of the cluster:
+
+kube-apiserver
+    The core component server that exposes the Kubernetes HTTP API
+etcd
+    Consistent and highly-available key value store for all API server data
+kube-scheduler
+    Looks for Pods not yet bound to a node, and assigns each Pod to a suitable node.
+kube-controller-manager
+    Runs controllers to implement Kubernetes API behavior.
+cloud-controller-manager (optional)
+    Integrates with underlying cloud provider(s).
+
+Node Components:
+Run on every node, maintaining running pods and providing the Kubernetes runtime environment:
+
+kubelet
+    Ensures that Pods are running, including their containers.
+kube-proxy (optional)
+    Maintains network rules on nodes to implement Services.
+Container runtime
+    Software responsible for running containers. Read Container Runtimes to learn more.
+
+Addons:
+
+DNS:
+    cluster wide DNS resolution
+WebUI:
+    For cluster management via web interface
+    Dashboard is a general purpose, web-based UI for Kubernetes clusters. It allows users to manage and troubleshoot applications running in the cluster, as well as the cluster itself.
+
+Container Resource Monitoring
+    For collecting and storing container metrics
+
+Cluster-level  logging
+    For saving container logs to a central log store

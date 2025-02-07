@@ -1,0 +1,103 @@
+1. Create the manifest file for k8s objects[ json/yml/yaml]
+2. Apply these files to cluster(to master) to bring into desired state
+3. Pods runs on node which is controlled by master
+
+components of Mater plane:
+
+1. API server
+2. Kube scheduler
+3. Controller manager
+4. ECTD (without this k8s will not work )
+
+API Server: - interacts with users - Meant to scale automatically according to load or request loadfromt - end of control plane
+
+ETCD: - store metadata or status of cluster - consistent and high availability - Store data in key value form
+
+## Workload:
+
+A workload is an application running on Kubernetes.
+
+Whether your workload is a single component or several that work together, on Kubernetes you run it inside a set of pods.
+In Kubernetes, a Pod represents a set of running containers on your cluster.
+
+## Pod Life Cycle:
+
+Here are the possible values for phase:
+
+    Pending
+    ---------
+    The Pod has been accepted by the Kubernetes cluster, but one or more of the containers has not been set up and made ready to run. This includes time a Pod spends waiting to be scheduled as well as the time spent downloading container images over the network.
+
+    Running
+    --------
+    The Pod has been bound to a node, and all of the containers have been created. At least one container is still running, or is in the process of starting or restarting.
+
+    Succeeded
+    -----------
+    All containers in the Pod have terminated in success, and will not be restarted.
+
+    Failed
+    -------
+    All containers in the Pod have terminated, and at least one container has terminated in failure. That is, the container either exited with non-zero status or was terminated by the system, and is not set for automatic restarting.
+
+    Unknown
+    --------
+    For some reason the state of the Pod could not be obtained. This phase typically occurs due to an error in communicating with the node where the Pod should be running.
+
+Below may appear in the Status field of some kubectl commands.
+
+CrashLoopBackOff:
+When a pod is failing to start repeatedly
+
+Terminating:
+when a pod is being deleted
+
+## Container Lifecycle:
+
+    Once the scheduler assigns a Pod to a Node, the kubelet starts creating containers for that Pod using a container runtime. There are three possible container states: Waiting, Running, and Terminated.
+
+    To check the state of a Pod's containers, you can use
+    'kubectl describe pod <name-of-pod>'.
+    The output shows the state for each container within that Pod.
+
+## To investigate the root cause of a CrashLoopBackOff issue, a user can:
+
+    Check logs:
+    -----------
+     Use 'kubectl logs <name-of-pod>' to check the logs of the container. This is often the most direct way to diagnose the issue causing the crashes.
+
+    Inspect events:
+    ----------------
+     Use 'kubectl describe pod <name-of-pod>' to see events for the Pod, which can provide hints about configuration or resource issues.
+
+    Review configuration:
+    -----------------------
+     Ensure that the Pod configuration, including environment variables and mounted volumes, is correct and that all required external resources are available.
+
+    Check resource limits:
+    ----------------------
+     Make sure that the container has enough CPU and memory allocated. Sometimes, increasing the resources in the Pod definition can resolve the issue.
+
+    Debug application:
+    -------------------
+    There might exist bugs or misconfigurations in the application code. Running this container image locally or in a development environment can help diagnose application specific issues.
+
+There are different containers:
+Init container, Sidecar container, app container
+
+Init Container:
+Specialized containers that run before app containers in a Pod. Init containers can contain utilities or setup scripts not present in an app image.
+
+Sidecar container:
+is a container that starts before the main application container and continues to run.
+
+    Sidecar containers are the secondary containers that run along with the main application container within the same Pod. These containers are used to enhance or to extend the functionality of the primary app container by providing additional services, or functionality such as logging, monitoring, security, or data synchronization, without directly altering the primary application code.
+
+    Sidecar containers run alongside app containers in the same pod. However, they do not execute the primary application logic; instead, they provide supporting functionality to the main application.
+
+In Kubernetes, there are two ways to expose Pod and container fields to a running container:
+
+    1. as environment variables
+    2. as files in a downwardAPI volume
+
+Together, these two ways of exposing Pod and container fields are called the downward API.

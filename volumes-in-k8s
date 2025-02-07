@@ -1,0 +1,108 @@
+
+
+My-app running in a Pod which connect to Mysql DB pod for storage
+
+once pod restart the data will be lost, 
+
+Storage Requirements:
+1) Storage that doesn't depend on the pod lifecycle.
+2) storage must be AVAILABLE on all nodes just not specific one
+3) Storage needs to survive even if cluster crashes
+
+
+Persistent storage: pv 
+- a cluster resource
+- created via yaml file
+- need actual physical storage
+- nfs-server or local disk or cloud-storage
+- external plugin to your cluster
+- PV are not namespaced, they are availale to all in the cluster
+- PV outside of namespace
+//////
+apiVersion: v1
+kind: Persistentvolume
+metadata:
+    name: pv-name
+spec:
+    capacity:
+        storage: 5Gi
+    volumeMode: Filesystem
+    accessModes:
+        - ReadWriteOnce
+    persistentVolumeReclaimPolicy: Recycle
+    storageClassName: slow
+    mountOptions:
+        - hard
+        - nfsvers=4.0
+    nfs:
+      path: /dir/path/on/nfs/server
+      server: nfs-server-ip-address
+      
+    //////
+Local Vs Remote Volume types:
+
+Application has to claim the Persistent Volume
+pvc - claim voulme storage 10Gi ReadWriteOnce
+
+pvc are created using yaml configuration
+
+////
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: pvc-name
+spec:
+    storageClassName: manual
+    volumeMode: FileSystem
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: 10Gi
+
+////
+apiVersion: v1
+kind: Pod
+metadata: 
+    name: myPod
+spec:
+    containers:
+      - name: myfrontend
+        image: nginx
+        volumeMounts:
+        - mountPath: "/var/www/html"
+          name: myPod
+    volumes:
+      - name: mypd
+        persistentVolumeClaim:
+          claimName: pvc-name
+//////
+Volume is mounted into the Pod
+Volume is mounted into container
+read/write 
+Pod requests the volume through PV claim
+Claim tries to find a volume in cluster
+Volume has the actual storage backed
+Claims must be in same namespace!
+
+        Pod
+        |
+        pvc
+        |
+|        |          |
+5Gi     10Gi        8Gi (pv) storage
+
+
+Admin provisions storage resource (pv)
+User creates claim to PV (pvc)
+
+easier for developer
+
+
+Set up complete Infra for data projects on aws using services like aws computes using Terraform.
+Set up minikube kubernetes cluster environment for mongo-express and mongodb and deployed using AWS services ECS, Lambda with Terraform
+
+
+/////
+sonarkube:
+how much codecoverage

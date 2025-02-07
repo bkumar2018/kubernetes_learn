@@ -1,0 +1,19 @@
+Create component in a Namespace:
+kubectl apply -f mysql-configmap.yaml --namespace=my-namespace
+
+This above command will create configmap in my-nameapce not in default one
+
+Other way is by adding namespace name in the config file:
+add namespace in metadata section
+//////////////
+appVersion: v1
+kind: ConfigMap
+metadata:
+    name: mysql-configmap
+    namespace: my-namespace
+data:
+    db_url: mysql-service.database
+///////////////
+Then to get always use -n name-of-namespce
+
+kubectl get configmap -m my-namespace

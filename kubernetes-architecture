@@ -1,0 +1,42 @@
+
+Kubernetes components architecture
+
+
+Master components:
+    1. Kube API server
+        - Entry point for all REST commands used to control the cluster.
+        - All administartive task are done by API server within the Master node.
+        - Create/Delete/Update or Display in Kubernetes objects it has to go through this API server.
+        - API server validates and configures API objects [port/services/replication/controller and deployment]
+        - We interact with these API's using tool called kubectl
+    
+    2. ETCD
+        - distributed key value store.
+        - k8s uses etcd as database to store all cluster data.
+        - some of data stored in etcd is - job scheduleing information, pods , state information 
+
+    3. Kube schedular
+        - Scheduler watches pods and assign the pods to run on specific host
+        - New pod does not have specific node assigned when it is formed, by using user or a deployment controller or a replication controller
+        - Scheduler chooses a suitable node for the pod 
+    
+    4. Control Manager
+        - Runs the controllers in the background which run different tasks in k8s cluster
+        - Performs cluster level functions (replication / tracking worker nodes / handling failures)
+
+Workers components:
+    1. Kubelet
+        - This the main node agent, 
+        - operates on each nodes and reads the container manifest, and mkae sure containers are active and in good conditions
+        - It ensures pods of containers are operating
+    
+    2. Kube-proxy
+        - Manages and tracks network rules on the host and managing connections.
+        - Network connectivity to your Pod is permitted by these network rules from both inside and outside of your cluster.
+    
+    3. Pod
+        - Collection of one or more Linux containers and is the smallest unit of k8s application
+        
+
+
+
