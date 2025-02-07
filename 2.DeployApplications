@@ -123,7 +123,7 @@ chanchal@Chanchals-MacBook-Pro kubernetes % minikube start
     ▪ Want kubectl v1.31.0? Try 'minikube kubectl -- get pods -A'
 🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
 
-chanchal@Chanchals-MacBook-Pro kubernetes % minikube status
+MacBook-Pro kubernetes % minikube status
 minikube
 type: Control Plane
 host: Running

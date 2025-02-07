@@ -1,0 +1,342 @@
+kubectl apply -f mongo-secret.yaml
+kubectl get secret
+
+kubectl apply -f  mongo.yaml
+
+
+
+
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl apply -f mongo-secret.yaml
+secret/mongodb-secret created
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl get secret
+NAME             TYPE     DATA   AGE
+mongodb-secret   Opaque   2      94s
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl apply -f mongo.yaml 
+deployment.apps/mongodb-deployment created
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl get all                                            
+NAME                                     READY   STATUS    RESTARTS   AGE
+pod/mongodb-deployment-5dbb467b7-ffcgg   1/1     Running   0          2m26s
+
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   73m
+
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/mongodb-deployment   1/1     1            1           2m26s
+
+NAME                                           DESIRED   CURRENT   READY   AGE
+replicaset.apps/mongodb-deployment-5dbb467b7   1         1         1       2m26s
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl get pod                                            
+NAME                                 READY   STATUS    RESTARTS   AGE
+mongodb-deployment-5dbb467b7-ffcgg   1/1     Running   0          2m37s
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl describe pod mongodb-deployment-5dbb467b7-ffcgg    
+Name:         mongodb-deployment-5dbb467b7-ffcgg
+Namespace:    default
+Priority:     0
+Node:         minikube/192.168.49.2
+Start Time:   Fri, 18 Oct 2024 22:53:07 +0530
+Labels:       app=mongodb
+              pod-template-hash=5dbb467b7
+Annotations:  <none>
+Status:       Running
+IP:           10.244.0.6
+IPs:
+  IP:           10.244.0.6
+Controlled By:  ReplicaSet/mongodb-deployment-5dbb467b7
+Containers:
+  monogodb:
+    Container ID:   docker://557bcbe4ac9e7aa334d88f43910575a56f94b3e97153bd0c09425d06d8f52fbd
+    Image:          mongo
+    Image ID:       docker-pullable://mongo@sha256:9342a9279a9841fc5f8192e49dcaaf9404e6bb3a90e8cf134eb96074830dd448
+    Port:           27017/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Fri, 18 Oct 2024 22:53:10 +0530
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      MONGO_INITDB_ROOT_USERNAME:  <set to the key 'mongo-root-username' in secret 'mongodb-secret'>  Optional: false
+      MONGO_INITDB_ROOT_PASSWORD:  <set to the key 'mongo-root-password' in secret 'mongodb-secret'>  Optional: false
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-7bfxh (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-7bfxh:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age    From               Message
+  ----    ------     ----   ----               -------
+  Normal  Scheduled  3m20s  default-scheduler  Successfully assigned default/mongodb-deployment-5dbb467b7-ffcgg to minikube
+  Normal  Pulling    3m19s  kubelet            Pulling image "mongo"
+  Normal  Pulled     3m17s  kubelet            Successfully pulled image "mongo" in 2.071s (2.071s including waiting). Image size: 845340252 bytes.
+  Normal  Created    3m17s  kubelet            Created container monogodb
+  Normal  Started    3m17s  kubelet            Started container monogodb
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+
+///// Add service /////
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl apply -f mongo.yaml
+deployment.apps/mongodb-deployment unchanged
+service/mongodb-service created
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl get pod                                        
+NAME                                 READY   STATUS    RESTARTS   AGE
+mongodb-deployment-5dbb467b7-ffcgg   1/1     Running   0          12m
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl describe pod mongodb-deployment-5dbb467b7-ffcgg
+Name:         mongodb-deployment-5dbb467b7-ffcgg
+Namespace:    default
+Priority:     0
+Node:         minikube/192.168.49.2
+Start Time:   Fri, 18 Oct 2024 22:53:07 +0530
+Labels:       app=mongodb
+              pod-template-hash=5dbb467b7
+Annotations:  <none>
+Status:       Running
+IP:           10.244.0.6
+IPs:
+  IP:           10.244.0.6
+Controlled By:  ReplicaSet/mongodb-deployment-5dbb467b7
+Containers:
+  monogodb:
+    Container ID:   docker://557bcbe4ac9e7aa334d88f43910575a56f94b3e97153bd0c09425d06d8f52fbd
+    Image:          mongo
+    Image ID:       docker-pullable://mongo@sha256:9342a9279a9841fc5f8192e49dcaaf9404e6bb3a90e8cf134eb96074830dd448
+    Port:           27017/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Fri, 18 Oct 2024 22:53:10 +0530
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      MONGO_INITDB_ROOT_USERNAME:  <set to the key 'mongo-root-username' in secret 'mongodb-secret'>  Optional: false
+      MONGO_INITDB_ROOT_PASSWORD:  <set to the key 'mongo-root-password' in secret 'mongodb-secret'>  Optional: false
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-7bfxh (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-7bfxh:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  12m   default-scheduler  Successfully assigned default/mongodb-deployment-5dbb467b7-ffcgg to minikube
+  Normal  Pulling    12m   kubelet            Pulling image "mongo"
+  Normal  Pulled     12m   kubelet            Successfully pulled image "mongo" in 2.071s (2.071s including waiting). Image size: 845340252 bytes.
+  Normal  Created    12m   kubelet            Created container monogodb
+  Normal  Started    12m   kubelet            Started container monogodb
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl get pod                                        
+NAME                                 READY   STATUS    RESTARTS   AGE
+mongodb-deployment-5dbb467b7-ffcgg   1/1     Running   0          12m
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl get service
+NAME              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)     AGE
+kubernetes        ClusterIP   10.96.0.1        <none>        443/TCP     86m
+mongodb-service   ClusterIP   10.100.191.231   <none>        27017/TCP   3m45s
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl describe service mongodb-service
+Name:              mongodb-service
+Namespace:         default
+Labels:            <none>
+Annotations:       <none>
+Selector:          app=mongodb
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                10.100.191.231
+IPs:               10.100.191.231
+Port:              <unset>  27017/TCP
+TargetPort:        27017/TCP
+Endpoints:         10.244.0.6:27017
+Session Affinity:  None
+Events:            <none>
+chanchal@Chanchals-MacBook-Pro k8s-configuration %
+
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl get pod                         
+NAME                                 READY   STATUS    RESTARTS   AGE
+mongodb-deployment-5dbb467b7-ffcgg   1/1     Running   0          15m
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl get pod -o wide 
+NAME                                 READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+mongodb-deployment-5dbb467b7-ffcgg   1/1     Running   0          15m   10.244.0.6   minikube   <none>           <none>
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl get all   
+NAME                                     READY   STATUS    RESTARTS   AGE
+pod/mongodb-deployment-5dbb467b7-ffcgg   1/1     Running   0          16m
+
+NAME                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)     AGE
+service/kubernetes        ClusterIP   10.96.0.1        <none>        443/TCP     87m
+service/mongodb-service   ClusterIP   10.100.191.231   <none>        27017/TCP   5m21s
+
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/mongodb-deployment   1/1     1            1           16m
+
+NAME                                           DESIRED   CURRENT   READY   AGE
+replicaset.apps/mongodb-deployment-5dbb467b7   1         1         1       16m
+chanchal@Chanchals-MacBook-Pro k8s-configuration % ]
+
+//// mongo-express and confimap //////
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl apply -f mongo-configmap.yml 
+configmap/mongodb-configmap created
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl apply -f mongo-express.yaml 
+deployment.apps/mongo-express created
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl get pod                     
+NAME                                 READY   STATUS              RESTARTS   AGE
+mongo-express-85d8576d55-l7c5d       0/1     ContainerCreating   0          5s
+mongodb-deployment-5dbb467b7-ffcgg   1/1     Running             0          40m
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl logs mongo-express-85d8576d55-l7c5d    
+Waiting for mongo:27017...
+/docker-entrypoint.sh: line 15: mongo: Name does not resolve
+/docker-entrypoint.sh: line 15: /dev/tcp/mongo/27017: Invalid argument
+Fri Oct 18 18:04:31 UTC 2024 retrying to connect to mongo:27017 (2/10)
+/docker-entrypoint.sh: line 15: mongo: Name does not resolve
+/docker-entrypoint.sh: line 15: /dev/tcp/mongo/27017: Invalid argument
+Fri Oct 18 18:04:32 UTC 2024 retrying to connect to mongo:27017 (3/10)
+/docker-entrypoint.sh: line 15: mongo: Name does not resolve
+/docker-entrypoint.sh: line 15: /dev/tcp/mongo/27017: Invalid argument
+Fri Oct 18 18:04:33 UTC 2024 retrying to connect to mongo:27017 (4/10)
+/docker-entrypoint.sh: line 15: mongo: Name does not resolve
+/docker-entrypoint.sh: line 15: /dev/tcp/mongo/27017: Invalid argument
+Fri Oct 18 18:04:34 UTC 2024 retrying to connect to mongo:27017 (5/10)
+/docker-entrypoint.sh: line 15: mongo: Name does not resolve
+/docker-entrypoint.sh: line 15: /dev/tcp/mongo/27017: Invalid argument
+Fri Oct 18 18:04:36 UTC 2024 retrying to connect to mongo:27017 (6/10)
+/docker-entrypoint.sh: line 15: mongo: Name does not resolve
+/docker-entrypoint.sh: line 15: /dev/tcp/mongo/27017: Invalid argument
+Fri Oct 18 18:04:37 UTC 2024 retrying to connect to mongo:27017 (7/10)
+/docker-entrypoint.sh: line 15: mongo: Name does not resolve
+/docker-entrypoint.sh: line 15: /dev/tcp/mongo/27017: Invalid argument
+Fri Oct 18 18:04:38 UTC 2024 retrying to connect to mongo:27017 (8/10)
+/docker-entrypoint.sh: line 15: mongo: Name does not resolve
+/docker-entrypoint.sh: line 15: /dev/tcp/mongo/27017: Invalid argument
+Fri Oct 18 18:04:39 UTC 2024 retrying to connect to mongo:27017 (9/10)
+/docker-entrypoint.sh: line 15: mongo: Name does not resolve
+/docker-entrypoint.sh: line 15: /dev/tcp/mongo/27017: Invalid argument
+Fri Oct 18 18:04:40 UTC 2024 retrying to connect to mongo:27017 (10/10)
+/docker-entrypoint.sh: line 15: mongo: Name does not resolve
+/docker-entrypoint.sh: line 15: /dev/tcp/mongo/27017: Invalid argument
+No custom config.js found, loading config.default.js
+Welcome to mongo-express 1.0.2
+------------------------
+
+
+Mongo Express server listening at http://0.0.0.0:8081
+Server is open to allow connections from anyone (0.0.0.0)
+basicAuth credentials are "admin:pass", it is recommended you change this in your config.js!
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+
+//////mongo-express-serivce 
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl apply -f mongo-express.yaml
+deployment.apps/mongo-express unchanged
+service/mongo-express-serivce created
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+chanchal@Chanchals-MacBook-Pro k8s-configuration % kubectl get service                            
+NAME                    TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+kubernetes              ClusterIP      10.96.0.1        <none>        443/TCP          128m
+mongo-express-serivce   LoadBalancer   10.111.26.76     <pending>     8081:30000/TCP   57s
+mongodb-service         ClusterIP      10.100.191.231   <none>        27017/TCP        46m
+chanchal@Chanchals-MacBook-Pro k8s-configuration % 
+
+using below command, its open in browser automatically : use credentials as admin/pass:
+chanchal@Chanchals-MacBook-Pro k8s-configuration % minikube service mongo-express-serivce 
+|-----------|-----------------------|-------------|---------------------------|
+| NAMESPACE |         NAME          | TARGET PORT |            URL            |
+|-----------|-----------------------|-------------|---------------------------|
+| default   | mongo-express-serivce |        8081 | http://192.168.49.2:30000 |
+|-----------|-----------------------|-------------|---------------------------|
+🏃  Starting tunnel for service mongo-express-serivce.
+|-----------|-----------------------|-------------|------------------------|
+| NAMESPACE |         NAME          | TARGET PORT |          URL           |
+|-----------|-----------------------|-------------|------------------------|
+| default   | mongo-express-serivce |             | http://127.0.0.1:53294 |
+|-----------|-----------------------|-------------|------------------------|
+🎉  Opening service default/mongo-express-serivce in default browser...
+❗  Because you are using a Docker driver on darwin, the terminal needs to be open to run it.
+
+
+
+
+
+/////// Namespaces ....
+
+chanchal@Chanchals-MacBook-Pro kubernetes % kubectl get namespaces
+NAME              STATUS   AGE
+default           Active   135m
+kube-node-lease   Active   135m
+kube-public       Active   135m
+kube-system       Active   135m
+chanchal@Chanchals-MacBook-Pro kubernetes % 
+
+chanchal@Chanchals-MacBook-Pro kubernetes % kubectl create namespace my-namespace
+namespace/my-namespace created
+chanchal@Chanchals-MacBook-Pro kubernetes % 
+chanchal@Chanchals-MacBook-Pro kubernetes % kubectl get namespaces               
+NAME              STATUS   AGE
+default           Active   138m
+kube-node-lease   Active   137m
+kube-public       Active   138m
+kube-system       Active   138m
+my-namespace      Active   3s
+
+
