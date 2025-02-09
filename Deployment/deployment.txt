@@ -1,0 +1,71 @@
+
+kubectl get deployment
+kubectl get pods
+kubectl get replicaset
+
+
+
+Deployment-1
+....
+
+controlplane ~ ➜  cat deployment-definition-1.yaml 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: busybox-pod
+  template:
+    metadata:
+      labels:
+        name: busybox-pod
+    spec:
+      containers:
+      - name: busybox-pod
+        image: busybox
+        command:
+        - sh
+        - "-c"
+        - echo Hello Kubernetes! && sleep 3600
+
+
+kubectl aply -f deployment-definition-1.yaml
+
+
+.....
+Deployment-2
+....
+controlplane ~ ➜  cat deployment-definition-2.yaml 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpd-frontend 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      name: frontend 
+  template:
+    metadata:
+      labels:
+        name: frontend 
+    spec:
+      containers:
+      - name: frontend 
+        image: httpd:2.4-alpine
+        command:
+        - sh
+        - "-c"
+        - echo Hello Kubernetes! && sleep 3600
+
+
+.....
+controlplane ~ ➜  kubectl apply -f deployment-definition-2.yaml 
+deployment.apps/httpd-frontend created
+
+
